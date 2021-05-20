@@ -1,14 +1,16 @@
 {
-  "name": "remove-console-plugin",
-  "version": "1.0.0",
-  "description": "remove console function in your JS code",
+  "name": "remove-console-webpack-plugin",
+  "version": "0.1.2",
+  "description": "A light webpack plugin to remove console in your JS code.",
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Yuan yiming",
-  "license": "ISC",
-  "dependencies": {
-    "recast": "^0.20.4"
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yuan-Yiming/remove-console-webpack-plugin"
   }
 }

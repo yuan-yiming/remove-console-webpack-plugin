@@ -1,6 +1,3 @@
-const recast = require('recast');
-
-
 // 清除 console 插件
 class RemoveConsolePlugin {
   // 获取用户传递的配置
@@ -48,8 +45,8 @@ class RemoveConsolePlugin {
 
           // let re = /console\.(.+)\([^]*\)(|;)/g;
           // let re = /console\.()\(&/g;
-          let re1 = RegExp(`console\\.(${includeStr})\\(\\)`, 'g')
-          let re2 = RegExp(`console\\.(${includeStr})\\(`, 'g');
+          let re1 = RegExp(`(window\\.|)console\\.(${includeStr})\\(\\)`, 'g');
+          let re2 = RegExp(`(window\\.|)console\\.(${includeStr})\\(`, 'g');
 
           Object.entries(assets).forEach(([filename, source]) => {
             // 拿到 js 文件

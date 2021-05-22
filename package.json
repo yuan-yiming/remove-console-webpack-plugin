@@ -1,10 +1,9 @@
 {
   "name": "remove-console-webpack-plugin",
-  "version": "0.1.3",
+  "version": "0.1.6",
   "description": "A light webpack plugin to remove console in your JS code.",
   "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Yuan yiming",
   "license": "MIT",

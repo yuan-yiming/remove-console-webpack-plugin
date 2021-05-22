@@ -1,21 +1,6 @@
 todo.md
-
-# 打包文件
-/dist
-dist.*
-
-output.js
-
-.DS_Store
 node_modules
-/dist
-
-/.VSCodeCounter
-.VSCodeCounter
-
-# local env files
-.env.local
-.env.*.local
+src/_index.js
 
 # Log files
 npm-debug.log*

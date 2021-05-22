@@ -1,83 +1,73 @@
-// 清除 console 插件
-class RemoveConsolePlugin {
-  // 获取用户传递的配置
+class RemoveConsoleWebpackPlugin {
+  // 构造函数接受配置参数
   constructor(options) {
     let include = options && options.include;
-    let exclude = options && options.exclude;
-    let fnArr = ['log', 'warn', 'error']; // default console function
+    let removed = ['log']; // 默认清除方法
 
-    if (!include) {
-      include = [];
-    } else if (!Array.isArray(include)) {
-      console.error('The options "include" must be an Array.')
+    if (include) {
+      if (!Array.isArray(include)) {
+        console.error('options.include must be an Array.');
+      } else if (include.includes('*')) {
+        removed = Object.keys(console).filter(fn => {
+          return typeof console[fn] === 'function';
+        })
+      } else {
+        removed = include;
+      }
     }
 
-    if (!exclude) {
-      exclude = [];
-    } else if (!Array.isArray(exclude)) {
-      console.error('The options "exclude" must be an Array.')
-    }
-
-    // this.include = Object.keys(console).filter(fn => {
-    //   return typeof console[fn] === 'function' && !exclude.includes(fn);
-    // })
-
-    // merge console function
-    fnArr = [...new Set([...fnArr, ...include])]
-    fnArr = fnArr.filter(fn => {
-      return !exclude.includes(fn);
-    })
-
-    this.fnArr = fnArr;
+    this.removed = removed;
   }
 
-  // webpack 会调用 RemoveConsolePlugin 实例的 apply 方法，并传入compiler 对象
+  // webpack 会调用插件实例的 apply 方法，并传入compiler 对象
   apply(compiler) {
-    /**
-     * 监听事件
-     * 发生 emit 事件时所有模块的转换和代码块对应的文件已经生成好，需要输出的资源即将输出
-     * 因此 emit 事件是修改 Webpack 输出资源的最后时机
-     */
-    compiler.hooks.compilation.tap('RemoveConsolePlugin',
-      compilation => {
-        let assetsHandler = assets => {
-          let includeStr = this.fnArr.reduce((a, b) => (a + '|' + b));
+    // js 资源代码处理函数
+    let assetsHandler = (assets, compilation) => {
+      let includeStr = this.removed.reduce((a, b) => (a + '|' + b));
 
-          // let re = /console\.(.+)\([^]*\)(|;)/g;
-          // let re = /console\.()\(&/g;
-          let re1 = RegExp(`(window\\.|)console\\.(${includeStr})\\(\\)`, 'g');
-          let re2 = RegExp(`(window\\.|)console\\.(${includeStr})\\(`, 'g');
+      let re1 = RegExp(`(window\\.|)console\\.(${includeStr})\\(\\)`, 'g');
+      let re2 = RegExp(`(window\\.|)console\\.(${includeStr})\\(`, 'g');
 
-          Object.entries(assets).forEach(([filename, source]) => {
-            // 拿到 js 文件
-            if (/\.js$/.test(filename)) {
-              source = source.source();
-              let outputContent = source.replace(re1, '').replace(re2, '(');
+      Object.entries(assets).forEach(([filename, source]) => {
+        // 匹配js文件
+        if (/\.js$/.test(filename)) {
+          // 处理前文件内容
+          source = source.source();
+          // 处理后文件内容
+          let outputContent = source.replace(re1, '').replace(re2, '(');
 
-              compilation.assets[filename] = {
-                // 返回文件内容
-                source: () => {
-                  return outputContent
-                },
-                // 返回文件大小
-                size: () => {
-                  return Buffer.byteLength(outputContent, 'utf8')
-                }
-              }
+          compilation.assets[filename] = {
+            // 返回文件内容
+            source: () => {
+              return outputContent
+            },
+            // 返回文件大小
+            size: () => {
+              return Buffer.byteLength(outputContent, 'utf8')
             }
-          })
+          }
         }
+      })
+    }
 
+    /**
+     * 通过 compiler.hooks.compilation.tap 监听事件
+     * 在回调方法中获取到 compilation 对象
+     */
+    compiler.hooks.compilation.tap('RemoveConsoleWebpackPlugin',
+      compilation => {
         // webpack 5
         if (compilation.hooks.processAssets) {
-          compilation.hooks.processAssets.tap({ name: 'RemoveConsolePlugin' }, assetsHandler);
+          compilation.hooks.processAssets.tap({ name: 'RemoveConsoleWebpackPlugin' },
+            assets => assetsHandler(assets, compilation)
+          );
         } else if (compilation.hooks.optimizeAssets) {
           // webpack 4
-          compilation.hooks.optimizeAssets.tap('RemoveConsolePlugin', assetsHandler);
+          compilation.hooks.optimizeAssets.tap('RemoveConsoleWebpackPlugin', assets => assetsHandler(assets, compilation));
         }
       })
   }
 }
 
-// 导出 Plugin
-module.exports = RemoveConsolePlugin;
+// export Plugin
+module.exports = RemoveConsoleWebpackPlugin;

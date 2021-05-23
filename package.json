@@ -1,6 +1,6 @@
 {
   "name": "remove-console-webpack-plugin",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "A light webpack plugin to remove console in your JS code.",
   "main": "./src/index.js",
   "scripts": {
@@ -11,5 +11,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Yuan-Yiming/remove-console-webpack-plugin"
-  }
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "javascript"
+  ]
 }

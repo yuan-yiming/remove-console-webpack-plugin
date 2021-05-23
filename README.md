@@ -54,4 +54,4 @@ module.exports = {
 ## Options
 | option | description | default |
 | ------ | ----------- | ------- |
-| include | An array of console methods than you want to remove. | ['log']|
+| include | An array of console methods that you want to remove. | ['log']|

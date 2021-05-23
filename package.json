@@ -3,8 +3,7 @@
   "version": "0.1.8",
   "description": "A light webpack plugin to remove console in your JS code.",
   "main": "./src/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Yuan yiming",
   "license": "MIT",
   "private": false,
